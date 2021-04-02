@@ -1,4 +1,4 @@
-import os, warnings, argparse
+import os, warnings, argparse, time
 os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
 os.environ["CUDA_VISIBLE_DEVICES"]='1'
 warnings.filterwarnings('ignore')
@@ -20,9 +20,15 @@ def main():
     sess = tf.compat.v1.Session(config=sess_config)
     sess.run(tf.compat.v1.global_variables_initializer())
     saver = tf.compat.v1.train.Saver()
-
+    
+    time_1 = time.time()
     tfp.training(sess=sess, neuralnet=neuralnet, saver=saver, dataset=dataset, epochs=FLAGS.epoch, batch_size=FLAGS.batch, normalize=True)
+    time_2 = time.time()
     tfp.test(sess=sess, neuralnet=neuralnet, saver=saver, dataset=dataset, batch_size=FLAGS.batch)
+    time_3 = time.time()
+    
+    print("TR: ", time_2 - time_1, dataset.num_tr)
+    print("TE: ", (time_3 - time_2)/dataset.num_te)
 
 if __name__ == '__main__':
 
